@@ -2,7 +2,7 @@
 
 **Minecraft Version: Spigot 1.18**
 
-###About
+### About
 MixAnyEnchant allows you to combine not allowed enchantments in an anvil. 
 The behavior as well as the experience cost is based on the default minecraft implementation. 
 The logic only intervenes, if an enchantment conflict exists. Otherwise, the default logic applies.
