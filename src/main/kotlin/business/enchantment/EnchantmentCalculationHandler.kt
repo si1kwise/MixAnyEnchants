@@ -19,7 +19,7 @@ class EnchantmentCalculationHandler {
         isRenamed: Boolean,
         targetItemMeta: ItemMeta,
         sacrificeItemMeta: ItemMeta): Int {
-        var enchantmentCost = getConflictingEnchantmentsCost(enchantmentsToAdd, sacrificeItemMeta is EnchantmentStorageMeta)
+        var enchantmentCost = getEnchantmentsCost(enchantmentsToAdd, sacrificeItemMeta is EnchantmentStorageMeta)
         enchantmentCost += (targetItemMeta as Repairable).repairCost
         enchantmentCost += (sacrificeItemMeta as Repairable).repairCost
 
@@ -30,7 +30,7 @@ class EnchantmentCalculationHandler {
     }
 
     // Returns the total cost of the given enchantments
-    private fun getConflictingEnchantmentsCost(
+    private fun getEnchantmentsCost(
         enchantmentsToAdd: Map<Enchantment, Int>,
         reducedCost: Boolean): Int {
         return enchantmentsToAdd.map { enchantment ->
