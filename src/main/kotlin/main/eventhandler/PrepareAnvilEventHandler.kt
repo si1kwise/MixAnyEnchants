@@ -2,7 +2,6 @@ package main.eventhandler
 
 import business.enchantment.EnchantmentCalculationHandler
 import business.enchantment.EnchantmentConflictHandler
-import org.bukkit.Bukkit.getServer
 import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.HumanEntity
@@ -61,18 +60,7 @@ class PrepareAnvilEventHandler(
 
                             val resultItemMeta = resultItem.itemMeta
                             if (resultItemMeta != null) {
-                                // for each enchantment, the item gets a penalty (higher experience costs when repairing)
-                                // The formula for prior use penalty is:
-                                // (prior use penalty) = 2^(anvil use count) - 1
-                                // this imitates the default minecraft behavior
-                                if (resultItemMeta is Repairable) {
-                                    val amountOfEnchantments = when (resultItemMeta) {
-                                        is EnchantmentStorageMeta -> sacrificeEnchantmentToLevelMap.size
-                                        else -> targetEnchantmentToLevelMap.size + sacrificeEnchantmentToLevelMap.size
-                                    }
-
-                                    resultItemMeta.repairCost = (2.0.pow(amountOfEnchantments.toDouble()) - 1).toInt()
-                                }
+                                updateRepairCostPenalty(resultItemMeta, targetEnchantmentToLevelMap, sacrificeEnchantmentToLevelMap)
 
                                 // check if there is the same enchantment with the same level
                                 val newEnchantmentToLevelMap =
@@ -105,6 +93,25 @@ class PrepareAnvilEventHandler(
             }
 
             event.result = resultItem
+        }
+    }
+
+    // for each enchantment, the item gets a penalty (higher experience costs when repairing)
+    // The formula for prior use penalty is:
+    // (prior use penalty) = 2^(anvil use count) - 1
+    // this imitates the default minecraft behavior
+    private fun updateRepairCostPenalty(
+        resultItemMeta: ItemMeta,
+        targetEnchantmentToLevelMap: Map<Enchantment, Int>,
+        sacrificeEnchantmentToLevelMap: Map<Enchantment, Int>) {
+
+        if (resultItemMeta is Repairable) {
+            val amountOfEnchantments = when (resultItemMeta) {
+                is EnchantmentStorageMeta -> sacrificeEnchantmentToLevelMap.size
+                else -> targetEnchantmentToLevelMap.size + sacrificeEnchantmentToLevelMap.size
+            }
+
+            resultItemMeta.repairCost = (2.0.pow(amountOfEnchantments.toDouble()) - 1).toInt()
         }
     }
 
